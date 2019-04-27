@@ -11,9 +11,9 @@ import org.jsoup.Jsoup;
 import TorrentDownload.DecodeChange;
 import TorrentDownload.ParseTorrent;
 
-//HTTPTracker²Ù×÷
+//HTTPTrackeræ“ä½œ
 public class HTTPTrackerTransfor {
-	//´´½¨Ò»¸ö20Î»µÄpeerid
+	//åˆ›å»ºä¸€ä¸ª20ä½çš„peerid
 	public static String createPeerId() {
 		String randomId = "";
 		for(int i=0;i<10;i++) {
@@ -21,7 +21,7 @@ public class HTTPTrackerTransfor {
 		}
 		return "-SF1-0-0-R"+randomId;
 	}
-	//½¨Á¢×ñÑ­http trackerµÄ·şÎñÆ÷Á´½Ó
+	//å»ºç«‹éµå¾ªhttp trackerçš„æœåŠ¡å™¨é“¾æ¥
 	public String setUpLink(String announce,String hash,int port) {
 		String peerId = createPeerId();
 		String url = announce+"?";
@@ -41,6 +41,7 @@ public class HTTPTrackerTransfor {
 			e.printStackTrace();
 		}
 		String result = ParseTorrent.ParseBencode(responseData);
+		result = Regex.cleanData(result);
 		System.out.println(ParseTorrent.showTorrent(result).toString());
 		return result;
 	}
