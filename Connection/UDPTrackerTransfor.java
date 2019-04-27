@@ -8,16 +8,16 @@ import java.util.regex.Pattern;
 
 import TorrentDownload.UDPData;
 
-//×ñÑ­UDP trackerĞ­ÒéµÄµØÖ·ĞÅÏ¢´«Êä
+//éµå¾ªUDP trackeråè®®çš„åœ°å€ä¿¡æ¯ä¼ è¾“
 public class UDPTrackerTransfor {
-	//½«16½øÖÆÊı×ª»¯Îª³¤¶ÈÎª8¸ö×Ö½ÚµÄbyteÊı×é
+	//å°†16è¿›åˆ¶æ•°è½¬åŒ–ä¸ºé•¿åº¦ä¸º8ä¸ªå­—èŠ‚çš„byteæ•°ç»„
 	private static byte[] transaction_id =new byte[4];
 	public static UDPData udpData = new UDPData();
-	public static String udpUrl;//trackerµØÖ·
-	public static int targetPort;//tracker¶Ë¿ÚºÅ
-	private static int port;//±¾µØ¼àÌı¶Ë¿ÚºÅ
+	public static String udpUrl;//trackeråœ°å€
+	public static int targetPort;//trackerç«¯å£å·
+	private static int port;//æœ¬åœ°ç›‘å¬ç«¯å£å·
 	private byte[] infoHashBytes;
-	UDPConnection conn;//udp·¢ËÍ½ÓÊÕ¶Ë¿Ú
+	UDPConnection conn;//udpå‘é€æ¥æ”¶ç«¯å£
 	static {
 		Random rand =new Random(25);
 		for(int i=0;i<4;i++)
@@ -28,6 +28,7 @@ public class UDPTrackerTransfor {
 		this.infoHashBytes = HexToByte20(hexHash);
 		conn = new UDPConnection(port);
 	}
+//å°†hexå­—ç¬¦ä¸²è½¬8ä¸ªå­—èŠ‚
 	public static byte[] HexToByte8(String inHex) {
 		byte[] hexBytes=new byte[8];
 		int index = 0;
@@ -42,6 +43,7 @@ public class UDPTrackerTransfor {
 		}
 		return hexBytes;
     }
+//å°†hexå­—ç¬¦ä¸²è½¬20ä¸ªå­—èŠ‚ï¼Œå®ç°å¯¹ç£åŠ›é“¾ç‰¹å¾ç è½¬2è¿›åˆ¶æµ
 	public static byte[] HexToByte20(String inHex) {
 		byte[] hexBytes=new byte[20];
 		int index = 0;
@@ -56,7 +58,7 @@ public class UDPTrackerTransfor {
 		}
 		return hexBytes;
     }
-	//½«Ò»¶ÎbyteÊı×é¿½±´µ½ÁíÒ»¶ËbyteÊı×éÉÏ
+	//å°†ä¸€æ®µbyteæ•°ç»„æ‹·è´åˆ°å¦ä¸€ç«¯byteæ•°ç»„ä¸Š
 	public static void byteCopy(byte[] array1,int start,byte[] array2,int begin,int end) {
 		for(int i = begin;i<end;i++) {
 			if(start>=array1.length) {
@@ -68,7 +70,7 @@ public class UDPTrackerTransfor {
 			
 		}
 	}
-	//¼ì²é½¨Á¢Á¬½ÓÊ±µÄ·µ»Ø°üÊı¾İÊÇ·ñÕıÈ·
+	//æ£€æŸ¥å»ºç«‹è¿æ¥æ—¶çš„è¿”å›åŒ…æ•°æ®æ˜¯å¦æ­£ç¡®
 	public Boolean check1(byte[] action,byte[] transaction_id) {
 		if(Arrays.equals(action,new byte[]{0,0,0,0})&&Arrays.equals(transaction_id, this.transaction_id)) {
 			return true;
@@ -81,6 +83,7 @@ public class UDPTrackerTransfor {
 		}
 		return false;
 	}
+//å‘é€announceè¯·æ±‚åŒ…ï¼Œå¹¶è§£ææ¥æ”¶æ•°æ®åŒ…
 	public byte[] startAnnounceRequest() {
 		byte[] announce = new byte[100];
 		udpData.ann_in.action = new byte[] {0,0,0,1};
@@ -143,12 +146,12 @@ public class UDPTrackerTransfor {
 		UDPTrackerTransfor.byteCopy(data, 4, udpData.conn_out.transaction_id,0,4);
 		UDPTrackerTransfor.byteCopy(data, 8, udpData.conn_out.connection_id,0,8);
 		if(check2(action_return, transcation_id_return)) {
-			System.out.println("½¨Á¢Á¬½Ó³É¹¦£¡");
+			System.out.println("å»ºç«‹è¿æ¥æˆåŠŸï¼");
 			for(int i=0;i<ips.size();i++) {
 				byte[] ipAddress = ips.get(i);
 				String ip1 = "";
 				for(int j=0;j<4;j++) {
-					ip1 += ipAddress[j]& 0xff;//ÎŞ·ûºÅ¶ş½øÖÆ×ª10½øÖÆ
+					ip1 += ipAddress[j]& 0xff;//æ— ç¬¦å·äºŒè¿›åˆ¶è½¬10è¿›åˆ¶
 					if(j!=3)
 						ip1 += ".";
 				}
@@ -157,11 +160,11 @@ public class UDPTrackerTransfor {
 				System.out.println("ip"+i+":"+ip1+" port:"+port1);
 			}
 		}else {
-			System.out.println("½¨Á¢Á¬½ÓÊ§°Ü£¡");
+			System.out.println("å»ºç«‹è¿æ¥å¤±è´¥ï¼");
 		}
 		return data;
 	}
-	//ºÍtracker·şÎñÆ÷½¨Á¢Á´½Ó,·µ»Ø»ñÈ¡µÄbyteÊı×é,announceÎªÖÖ×ÓÖĞµÄ·şÎñÆ÷µØÖ·£¬portÎªÓëtracker´«ÊäµÄ¶Ë¿ÚºÅ
+//å’ŒtrackeræœåŠ¡å™¨å»ºç«‹é“¾æ¥,è¿”å›è·å–çš„byteæ•°ç»„,announceä¸ºç§å­ä¸­çš„æœåŠ¡å™¨åœ°å€ï¼Œportä¸ºä¸trackerä¼ è¾“çš„ç«¯å£å·
 	public byte[] setUpLink(String announce) {
 		byte[] connection_id = HexToByte8("41727101980");
 		byte[] action = {0,0,0,0};
@@ -177,7 +180,7 @@ public class UDPTrackerTransfor {
     		targetPort = Integer.parseInt(mat.group(2));
     		System.out.println("udpUrl "+udpUrl+",targetPort "+targetPort);
         }else {
-        	System.out.println("Î´Æ¥Åäµ½ÓĞĞ§Á´½Ó");
+        	System.out.println("æœªåŒ¹é…åˆ°æœ‰æ•ˆé“¾æ¥");
         	return null;
         }
 		conn.send(packetData,udpUrl, targetPort);
@@ -186,9 +189,9 @@ public class UDPTrackerTransfor {
 		UDPTrackerTransfor.byteCopy(data, 4, udpData.conn_out.transaction_id,0,4);
 		UDPTrackerTransfor.byteCopy(data, 8, udpData.conn_out.connection_id,0,8);
 		if(check1(udpData.conn_out.action, udpData.conn_out.transaction_id)) {
-			System.out.println("½¨Á¢Á¬½Ó³É¹¦£¡");
+			System.out.println("å»ºç«‹è¿æ¥æˆåŠŸï¼");
 		}else {
-			System.out.println("½¨Á¢Á¬½ÓÊ§°Ü£¡");
+			System.out.println("å»ºç«‹è¿æ¥å¤±è´¥ï¼");
 		}
 		return data;
 	}
