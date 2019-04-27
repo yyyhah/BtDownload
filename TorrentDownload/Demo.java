@@ -12,18 +12,7 @@ import Connection.HTTPTrackerTransfor;
 import Connection.UDPTrackerTransfor;
 import net.sf.json.JSONObject;
 import java.util.Random;
-public class Demo {
-//	public static byte[] reverseByte(byte[] array) {
-//		for(int i=0;i<=array.length/2;i++) {
-//			byte temp;
-//			temp = array[i];
-//			array[i] = array[array.length-i-1];
-//			array[array.length-i-1] = temp;
-//		}
-//		return array;
-//	}
-	
-	
+public class Demo {	
 	public static void main(String[] args) {
 		int port = 6881;
 		String hash = "052ef38011e34ef27e58391da13a327eb88323a3";
@@ -32,25 +21,25 @@ public class Demo {
 //		char[] torrentChar = RWDTorrent.read("E:/test.torrent");
 //		//char[] torrentChar = RWDTorrent.readFromGet(getTorrent);
 //		if(torrentChar==null) {
-//			System.out.println("¸ÃÎÄ¼þ²»´æÔÚ");
+//			System.out.println("è¯¥æ–‡ä»¶ä¸å­˜åœ¨");
 //			return;
 //		}
 //		String torrent = new String(torrentChar);
 //		System.out.println(torrent);
-//		//½âÎöÖÖ×Ó
+//		//è§£æžç§å­
 //		String result1 = ParseTorrent.ParseBencode(torrent);
 //		if(result1==null) {
-//			System.out.println("ÎÄ¼þ½âÎö³ö´í!");
+//			System.out.println("æ–‡ä»¶è§£æžå‡ºé”™!");
 //		}else {
-//			System.out.println("ÎÄ¼þ½âÎö³É¹¦!");
+//			System.out.println("æ–‡ä»¶è§£æžæˆåŠŸ!");
 //		}	
-//		//½«½âÎö³öÀ´µÄÖÖ×ÓÎÄ±¾´æÈëtxtÎÄ¼þ
+//		//å°†è§£æžå‡ºæ¥çš„ç§å­æ–‡æœ¬å­˜å…¥txtæ–‡ä»¶
 //		RWDTorrent.write(Regex.cleanData(result1),"E:/temp2.txt");
-//		//ÏÔÊ¾ÖÖ×Ó½á¹¹
+//		//æ˜¾ç¤ºç§å­ç»“æž„
 //		try {
 //			JSONObject torrentJson = ParseTorrent.showTorrent(result1);
 //		}catch(Exception e) {
-//			System.out.println("ÖÖ×ÓÎÄ¼þ·Ç±ê×¼!");
+//			System.out.println("ç§å­æ–‡ä»¶éžæ ‡å‡†!");
 //		}
 //		HTTPTrackerTransfor httpTf = new HTTPTrackerTransfor();
 //		String data = httpTf.setUpLink("http://tracker.supertracker.net:1337/announce", hash, port);
