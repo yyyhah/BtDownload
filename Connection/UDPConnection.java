@@ -55,12 +55,11 @@ public class UDPConnection {
 	//接收数据包
 	public byte[] receive() {
 		while(true){ 
-            byte[] buf = new byte[2048];
+            byte[] buf = new byte[1024];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             try {
 				this.s.receive(packet);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				System.out.println("接受数据包出错！");
 				e.printStackTrace();	
 			}

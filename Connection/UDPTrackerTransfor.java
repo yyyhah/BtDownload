@@ -1,23 +1,23 @@
 package Connection;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import TorrentDownload.DecodeChange;
 import TorrentDownload.UDPData;
-
-//éµå¾ªUDP trackeråè®®çš„åœ°å€ä¿¡æ¯ä¼ è¾“
+import function.MyFunction;
+//×ñÑ­UDP trackerĞ­ÒéµÄµØÖ·ĞÅÏ¢´«Êä
 public class UDPTrackerTransfor {
-	//å°†16è¿›åˆ¶æ•°è½¬åŒ–ä¸ºé•¿åº¦ä¸º8ä¸ªå­—èŠ‚çš„byteæ•°ç»„
+	//½«16½øÖÆÊı×ª»¯Îª³¤¶ÈÎª8¸ö×Ö½ÚµÄbyteÊı×é
 	private static byte[] transaction_id =new byte[4];
 	public static UDPData udpData = new UDPData();
-	public static String udpUrl;//trackeråœ°å€
-	public static int targetPort;//trackerç«¯å£å·
-	private static int port;//æœ¬åœ°ç›‘å¬ç«¯å£å·
+	public static String udpUrl;//trackerµØÖ·
+	public static int targetPort;//tracker¶Ë¿ÚºÅ
+	private static int port;//±¾µØ¼àÌı¶Ë¿ÚºÅ
 	private byte[] infoHashBytes;
-	UDPConnection conn;//udpå‘é€æ¥æ”¶ç«¯å£
+	UDPConnection conn;//udp·¢ËÍ½ÓÊÕ¶Ë¿Ú
 	static {
 		Random rand =new Random(25);
 		for(int i=0;i<4;i++)
@@ -25,52 +25,12 @@ public class UDPTrackerTransfor {
 	}
 	public UDPTrackerTransfor(int port,String hexHash) {
 		this.port = port;
-		this.infoHashBytes = HexToByte20(hexHash);
+		this.infoHashBytes = DecodeChange.HexToByte20(hexHash);
 		conn = new UDPConnection(port);
 	}
-//å°†hexå­—ç¬¦ä¸²è½¬8ä¸ªå­—èŠ‚
-	public static byte[] HexToByte8(String inHex) {
-		byte[] hexBytes=new byte[8];
-		int index = 0;
-		while(inHex.length()<16) {
-			inHex = "0"+inHex;
-		}
-		char[] inHexChr = inHex.toCharArray();
-		for(int i=0;i<inHex.length();i=i+2) {
-			int n = inHexChr[i+1]-48 + (inHexChr[i]-48)*16;
-			hexBytes[index] = (byte)(n&0xff);
-			index++;
-		}
-		return hexBytes;
-    }
-//å°†hexå­—ç¬¦ä¸²è½¬20ä¸ªå­—èŠ‚ï¼Œå®ç°å¯¹ç£åŠ›é“¾ç‰¹å¾ç è½¬2è¿›åˆ¶æµ
-	public static byte[] HexToByte20(String inHex) {
-		byte[] hexBytes=new byte[20];
-		int index = 0;
-		while(inHex.length()<40) {
-			inHex = "0"+inHex;
-		}
-		char[] inHexChr = inHex.toCharArray();
-		for(int i=0;i<inHex.length();i=i+2) {
-			int n = inHexChr[i+1]-48 + (inHexChr[i]-48)*16;
-			hexBytes[index] = (byte)(n&0xff);
-			index++;
-		}
-		return hexBytes;
-    }
-	//å°†ä¸€æ®µbyteæ•°ç»„æ‹·è´åˆ°å¦ä¸€ç«¯byteæ•°ç»„ä¸Š
-	public static void byteCopy(byte[] array1,int start,byte[] array2,int begin,int end) {
-		for(int i = begin;i<end;i++) {
-			if(start>=array1.length) {
-				array2[i] = 0;
-				continue;
-			}
-			array2[i] = array1[start];
-			start ++;
-			
-		}
-	}
-	//æ£€æŸ¥å»ºç«‹è¿æ¥æ—¶çš„è¿”å›åŒ…æ•°æ®æ˜¯å¦æ­£ç¡®
+	
+	
+	//¼ì²é½¨Á¢Á¬½ÓÊ±µÄ·µ»Ø°üÊı¾İÊÇ·ñÕıÈ·
 	public Boolean check1(byte[] action,byte[] transaction_id) {
 		if(Arrays.equals(action,new byte[]{0,0,0,0})&&Arrays.equals(transaction_id, this.transaction_id)) {
 			return true;
@@ -83,7 +43,6 @@ public class UDPTrackerTransfor {
 		}
 		return false;
 	}
-//å‘é€announceè¯·æ±‚åŒ…ï¼Œå¹¶è§£ææ¥æ”¶æ•°æ®åŒ…
 	public byte[] startAnnounceRequest() {
 		byte[] announce = new byte[100];
 		udpData.ann_in.action = new byte[] {0,0,0,1};
@@ -91,29 +50,30 @@ public class UDPTrackerTransfor {
 		udpData.ann_in.transaction_id = udpData.conn_out.transaction_id;
 		udpData.ann_in.downloaded = new byte[] {0,0,0,0,0,0,0,0};
 		udpData.ann_in.uploaded = new byte[] {0,0,0,0,0,0,0,0};
-		udpData.ann_in.peer_id = HTTPTrackerTransfor.createPeerId().getBytes();
+		udpData.ann_in.peer_id = MyFunction.createPeerId().getBytes();
 		udpData.ann_in.extensiosns = new byte[] {0,0};
-		udpData.ann_in.port = new byte[] {(byte) (port/128),(byte) (port%128)};
+		udpData.ann_in.port = new byte[] {(byte) (port/256),(byte) (port%256)};
 		udpData.ann_in.IpAddress = new byte[] {0,0,0,0};
 		udpData.ann_in.key = new byte[] {1,1,1,1};
-		udpData.ann_in.event = new byte[] {0,0,0,2};
-		udpData.ann_in.numWant = new byte[] {0,0,0,5};
+		udpData.ann_in.event = new byte[] {0,0,0,(byte)2};
+		udpData.ann_in.numWant = new byte[] {0,0,0,(byte)5};
 		udpData.ann_in.info_hash = this.infoHashBytes;
-		udpData.ann_in.left = new byte[] {0,0,0,0,0,0,0,0};
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.connection_id,0,announce,0,8);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.action,0,announce,8,12);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.transaction_id,0,announce,12,16);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.info_hash,0,announce,16,36);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.peer_id,0,announce,36,56);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.downloaded,0,announce,56,64);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.left,0,announce,64,72);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.uploaded,0,announce,72,80);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.event,0,announce,80,84);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.IpAddress,0,announce,84,88);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.key,0,announce,88,92);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.numWant,0,announce,92,96);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.port,0,announce,96,98);
-		UDPTrackerTransfor.byteCopy(udpData.ann_in.extensiosns,0,announce,98,100);
+		//1651507200
+		udpData.ann_in.left = new byte[] {6,2,7,0,0,0,0,0};
+		MyFunction.byteCopy(udpData.ann_in.connection_id,0,announce,0,8);
+		MyFunction.byteCopy(udpData.ann_in.action,0,announce,8,12);
+		MyFunction.byteCopy(udpData.ann_in.transaction_id,0,announce,12,16);
+		MyFunction.byteCopy(udpData.ann_in.info_hash,0,announce,16,36);
+		MyFunction.byteCopy(udpData.ann_in.peer_id,0,announce,36,56);
+		MyFunction.byteCopy(udpData.ann_in.downloaded,0,announce,56,64);
+		MyFunction.byteCopy(udpData.ann_in.left,0,announce,64,72);
+		MyFunction.byteCopy(udpData.ann_in.uploaded,0,announce,72,80);
+		MyFunction.byteCopy(udpData.ann_in.event,0,announce,80,84);
+		MyFunction.byteCopy(udpData.ann_in.IpAddress,0,announce,84,88);
+		MyFunction.byteCopy(udpData.ann_in.key,0,announce,88,92);
+		MyFunction.byteCopy(udpData.ann_in.numWant,0,announce,92,96);
+		MyFunction.byteCopy(udpData.ann_in.port,0,announce,96,98);
+		MyFunction.byteCopy(udpData.ann_in.extensiosns,0,announce,98,100);
 		conn.send(announce,udpUrl,targetPort);
 		byte[] data = conn.receive();
 		byte[] action_return = new byte[4];
@@ -125,13 +85,13 @@ public class UDPTrackerTransfor {
 		byte[] port = new byte[2];
 		ArrayList<byte[]> ips = new ArrayList<byte[]>();
 		ArrayList<byte[]> ports = new ArrayList<byte[]>();
-		UDPTrackerTransfor.byteCopy(data, 0, action_return,0,4);
-		UDPTrackerTransfor.byteCopy(data, 4, transcation_id_return,0,4);
-		UDPTrackerTransfor.byteCopy(data, 8, interval_return,0,4);
-		UDPTrackerTransfor.byteCopy(data, 12, leechers,0,4);
-		UDPTrackerTransfor.byteCopy(data, 16, seeders,0,4);
-		UDPTrackerTransfor.byteCopy(data, 20, ip,0,4);
-		UDPTrackerTransfor.byteCopy(data, 24, port,0,2);
+		MyFunction.byteCopy(data, 0, action_return,0,4);
+		MyFunction.byteCopy(data, 4, transcation_id_return,0,4);
+		MyFunction.byteCopy(data, 8, interval_return,0,4);
+		MyFunction.byteCopy(data, 12, leechers,0,4);
+		MyFunction.byteCopy(data, 16, seeders,0,4);
+		MyFunction.byteCopy(data, 20, ip,0,4);
+		MyFunction.byteCopy(data, 24, port,0,2);
 		int index = 20;
 		while((!Arrays.equals(ip, new byte[] {0,0,0,0}))&&index<data.length-6) {
 			ips.add(ip);
@@ -139,19 +99,19 @@ public class UDPTrackerTransfor {
 			ip= new byte[4];
 			port = new byte[2];
 			index += 6;
-			UDPTrackerTransfor.byteCopy(data, index, ip,0,4);
-			UDPTrackerTransfor.byteCopy(data, index+4, port,0,2);
+			MyFunction.byteCopy(data, index, ip,0,4);
+			MyFunction.byteCopy(data, index+4, port,0,2);
 		}
-		UDPTrackerTransfor.byteCopy(data, 0, udpData.conn_out.action,0,4);
-		UDPTrackerTransfor.byteCopy(data, 4, udpData.conn_out.transaction_id,0,4);
-		UDPTrackerTransfor.byteCopy(data, 8, udpData.conn_out.connection_id,0,8);
+		MyFunction.byteCopy(data, 0, udpData.conn_out.action,0,4);
+		MyFunction.byteCopy(data, 4, udpData.conn_out.transaction_id,0,4);
+		MyFunction.byteCopy(data, 8, udpData.conn_out.connection_id,0,8);
 		if(check2(action_return, transcation_id_return)) {
-			System.out.println("å»ºç«‹è¿æ¥æˆåŠŸï¼");
+			System.out.println("½¨Á¢Á¬½Ó³É¹¦£¡");
 			for(int i=0;i<ips.size();i++) {
 				byte[] ipAddress = ips.get(i);
 				String ip1 = "";
 				for(int j=0;j<4;j++) {
-					ip1 += ipAddress[j]& 0xff;//æ— ç¬¦å·äºŒè¿›åˆ¶è½¬10è¿›åˆ¶
+					ip1 += ipAddress[j]& 0xff;//ÎŞ·ûºÅ¶ş½øÖÆ×ª10½øÖÆ
 					if(j!=3)
 						ip1 += ".";
 				}
@@ -160,18 +120,18 @@ public class UDPTrackerTransfor {
 				System.out.println("ip"+i+":"+ip1+" port:"+port1);
 			}
 		}else {
-			System.out.println("å»ºç«‹è¿æ¥å¤±è´¥ï¼");
+			System.out.println("½¨Á¢Á¬½ÓÊ§°Ü£¡");
 		}
 		return data;
 	}
-//å’ŒtrackeræœåŠ¡å™¨å»ºç«‹é“¾æ¥,è¿”å›è·å–çš„byteæ•°ç»„,announceä¸ºç§å­ä¸­çš„æœåŠ¡å™¨åœ°å€ï¼Œportä¸ºä¸trackerä¼ è¾“çš„ç«¯å£å·
+	//ºÍtracker·şÎñÆ÷½¨Á¢Á´½Ó,·µ»Ø»ñÈ¡µÄbyteÊı×é,announceÎªÖÖ×ÓÖĞµÄ·şÎñÆ÷µØÖ·£¬portÎªÓëtracker´«ÊäµÄ¶Ë¿ÚºÅ
 	public byte[] setUpLink(String announce) {
-		byte[] connection_id = HexToByte8("41727101980");
+		byte[] connection_id = DecodeChange.HexToByte8("41727101980");
 		byte[] action = {0,0,0,0};
 		byte[] packetData = new byte[16];
-		byteCopy(connection_id,0,packetData,0,8);
-		byteCopy(action,0,packetData,8,12);
-		byteCopy(transaction_id,0,packetData,12,16);
+		MyFunction.byteCopy(connection_id,0,packetData,0,8);
+		MyFunction.byteCopy(action,0,packetData,8,12);
+		MyFunction.byteCopy(transaction_id,0,packetData,12,16);
 		String regEx = "//(.*?):(\\d*)";  
 		Pattern pat = Pattern.compile(regEx);  
         Matcher mat = pat.matcher(announce);  
@@ -180,18 +140,18 @@ public class UDPTrackerTransfor {
     		targetPort = Integer.parseInt(mat.group(2));
     		System.out.println("udpUrl "+udpUrl+",targetPort "+targetPort);
         }else {
-        	System.out.println("æœªåŒ¹é…åˆ°æœ‰æ•ˆé“¾æ¥");
+        	System.out.println("Î´Æ¥Åäµ½ÓĞĞ§Á´½Ó");
         	return null;
         }
 		conn.send(packetData,udpUrl, targetPort);
 		byte[] data = conn.receive();
-		UDPTrackerTransfor.byteCopy(data, 0, udpData.conn_out.action,0,4);
-		UDPTrackerTransfor.byteCopy(data, 4, udpData.conn_out.transaction_id,0,4);
-		UDPTrackerTransfor.byteCopy(data, 8, udpData.conn_out.connection_id,0,8);
+		MyFunction.byteCopy(data, 0, udpData.conn_out.action,0,4);
+		MyFunction.byteCopy(data, 4, udpData.conn_out.transaction_id,0,4);
+		MyFunction.byteCopy(data, 8, udpData.conn_out.connection_id,0,8);
 		if(check1(udpData.conn_out.action, udpData.conn_out.transaction_id)) {
-			System.out.println("å»ºç«‹è¿æ¥æˆåŠŸï¼");
+			System.out.println("½¨Á¢Á¬½Ó³É¹¦£¡");
 		}else {
-			System.out.println("å»ºç«‹è¿æ¥å¤±è´¥ï¼");
+			System.out.println("½¨Á¢Á¬½ÓÊ§°Ü£¡");
 		}
 		return data;
 	}

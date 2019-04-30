@@ -2,32 +2,26 @@ package Connection;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
 import TorrentDownload.DecodeChange;
 import TorrentDownload.ParseTorrent;
+import TorrentDownload.Regex;
+import function.MyFunction;
 
-//HTTPTrackeræ“ä½œ
+//HTTPTracker²Ù×÷
 public class HTTPTrackerTransfor {
-	//åˆ›å»ºä¸€ä¸ª20ä½çš„peerid
-	public static String createPeerId() {
-		String randomId = "";
-		for(int i=0;i<10;i++) {
-			randomId += String.valueOf((int)(Math.random()*10));
-		}
-		return "-SF1-0-0-R"+randomId;
-	}
-	//å»ºç«‹éµå¾ªhttp trackerçš„æœåŠ¡å™¨é“¾æ¥
+	//´´½¨Ò»¸ö20Î»µÄpeerid
+	
+	//½¨Á¢×ñÑ­http trackerµÄ·şÎñÆ÷Á´½Ó
 	public String setUpLink(String announce,String hash,int port) {
-		String peerId = createPeerId();
+		String peerId = MyFunction.createPeerId();
 		String url = announce+"?";
 		hash = DecodeChange.toStringHexTest(hash);
 		hash = URLEncoder.encode(hash);
-		url += "peer_id="+peerId+"&info_hash="+hash+"&port="+port+"&uploaded=0&downloaded=0&left="+0;
+		url += "peer_id="+peerId+"&info_hash="+hash+"&port="+port+"&uploaded=0&downloaded=0&left="+1651507200;
 		System.out.println(url);
 		String responseData = null;
 		try {

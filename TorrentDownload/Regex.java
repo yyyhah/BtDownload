@@ -101,6 +101,7 @@ public class Regex {
 			}
 		}
 		resultStr = resultStr.replaceAll(",([\\]\\}])","$1");	
+		resultStr = resultStr.replaceAll("\\n"," ");	
 		return resultStr.substring(0,resultStr.length() - 1);
 	}
 	private static int getType() {

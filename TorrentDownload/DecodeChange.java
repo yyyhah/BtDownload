@@ -5,25 +5,11 @@ import java.io.UnsupportedEncodingException;
 public class DecodeChange {
 	//将字符串转化为16位字符串,等价于php的pack
 	public static String toStringHexTest(String inHex) {
-//		byte[] baKeyword = new byte[s.length() / 2];
-//		for (int i =0; i < baKeyword.length; i++) {
-//		try {
-//		baKeyword[i]=(byte)(0xff&Integer.parseInt(s.substring(i*2,i*2+2),16));
-//		}catch (Exception e) {
-//		e.printStackTrace();
-//		}
-//		}
-//		try {
-//		s= new String(baKeyword,"utf-8");// UTF-16le:Not
-//		} catch (Exception e1) {
-//		e1.printStackTrace();
-//		}
-//		return s;
 		byte[] hexBytes=new byte[inHex.length()/2];
 		int index = 0;
 		char[] inHexChr = inHex.toCharArray();
 		for(int i=0;i<inHex.length();i=i+2) {
-			int n = inHexChr[i+1]-48 + (inHexChr[i]-48)*16;
+			int n = Integer.parseInt(inHex.substring(i,i+2), 16);
 			hexBytes[index] = (byte)(n&0xff);
 			index++;
 		}
@@ -36,4 +22,30 @@ public class DecodeChange {
 		}
 		return result;
 	}
+	public static byte[] HexToByte20(String inHex) {
+		byte[] hexBytes=new byte[20];
+		int index = 0;
+		while(inHex.length()<40) {
+			inHex = "0"+inHex;
+		}
+		for(int i=0;i<inHex.length();i=i+2) {
+			int n = Integer.parseInt(inHex.substring(i,i+2), 16);
+			hexBytes[index] = (byte)(n&0xff);
+			index++;
+		}
+		return hexBytes;
+    }
+	public static byte[] HexToByte8(String inHex) {
+		byte[] hexBytes=new byte[8];
+		int index = 0;
+		while(inHex.length()<16) {
+			inHex = "0"+inHex;
+		}
+		for(int i=0;i<inHex.length();i=i+2) {
+			int n = Integer.parseInt(inHex.substring(i,i+2), 16);
+			hexBytes[index] = (byte)(n&0xff);
+			index++;
+		}
+		return hexBytes;
+    }
 }
