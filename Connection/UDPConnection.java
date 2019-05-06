@@ -62,10 +62,17 @@ public class UDPConnection {
 
 	// 接收数据包
 	public byte[] receive() {
+<<<<<<< HEAD
 		while (true) {
 			byte[] buf = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 			try {
+=======
+		while(true){ 
+            byte[] buf = new byte[1024];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            try {
+>>>>>>> 8b38b83700e6210d2c0bd26d9bc479bd4aa8f8f5
 				this.s.receive(packet);
 			} catch (IOException e) {
 				System.out.println("接受数据包出错！");

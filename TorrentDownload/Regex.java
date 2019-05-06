@@ -99,9 +99,15 @@ public class Regex {
 				}
 			}
 		}
+<<<<<<< HEAD
 		resultStr = resultStr.replaceAll(",([\\]\\}])", "$1");
 		resultStr = resultStr.replaceAll("\\n", " ");
 		return resultStr.substring(0, resultStr.length() - 1);
+=======
+		resultStr = resultStr.replaceAll(",([\\]\\}])","$1");	
+		resultStr = resultStr.replaceAll("\\n"," ");	
+		return resultStr.substring(0,resultStr.length() - 1);
+>>>>>>> 8b38b83700e6210d2c0bd26d9bc479bd4aa8f8f5
 	}
 
 	private static int getType() {

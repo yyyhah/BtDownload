@@ -13,6 +13,7 @@ import function.MyFunction;
 
 //HTTPTracker操作
 public class HTTPTrackerTransfor {
+<<<<<<< HEAD
 	// 创建一个20位的peerid
 
 	// 建立遵循http tracker的服务器链接
@@ -23,6 +24,17 @@ public class HTTPTrackerTransfor {
 		hash = URLEncoder.encode(hash);
 		url += "peer_id=" + peerId + "&info_hash=" + hash + "&port=" + port + "&uploaded=0&downloaded=0&left="
 				+ 1651507200;
+=======
+	//创建一个20位的peerid
+	
+	//建立遵循http tracker的服务器链接
+	public String setUpLink(String announce,String hash,int port) {
+		String peerId = MyFunction.createPeerId();
+		String url = announce+"?";
+		hash = DecodeChange.toStringHexTest(hash);
+		hash = URLEncoder.encode(hash);
+		url += "peer_id="+peerId+"&info_hash="+hash+"&port="+port+"&uploaded=0&downloaded=0&left="+1651507200;
+>>>>>>> 8b38b83700e6210d2c0bd26d9bc479bd4aa8f8f5
 		System.out.println(url);
 		String responseData = null;
 		try {
